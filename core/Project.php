@@ -41,22 +41,44 @@ class _Project
 					$controller = str_replace('{' . $key . '}', $value, $controller);
 					$action = str_replace('{' . $key . '}', $value, $action);
 				}
-				$module = preg_replace('#{(.*)}#', '', $module);
-				$controller = preg_replace('#{(.*)}#', '', $controller);
-				$action = preg_replace('#{(.*)}#', '', $action);
-				echo $module . '/' . $controller . '/' . $action;
-				// __construct du controller
-				// On appelle init_global
-				// On appelle init_module
-				// On appelle init_controller
-				// On appelle l'action
-				// On appelle inter_controller
-				// On appelle inter_module
-				// On appelle inter_global
-				// On appelle la view
-				// On appelle end_controller
-				// On appelle end_module
-				// On appelle end_global
+				$module = ucfirst(basename(preg_replace('#{(.*)}#', '', $module)));
+				$controller = 'Modules_' . $module . '_' . ucfirst(basename(preg_replace('#{(.*)}#', '', $controller)));
+				$action = ucfirst(basename(preg_replace('#{(.*)}#', '', $action))) . 'Action';
+
+				if (!file_exists('modules/' . $module))
+					throw new Exception("Impossible de trouver ce module.");
+				if (!class_exists($controller))
+					throw new Exception("Impossible de trouver ce controller.");
+				if (!method_exists($controller, $action))
+					throw new Exception("Impossible de trouver cette action.");
+
+				$page = new $controller();
+				if (method_exists($page, 'init_core'))
+					$page->init_core();
+				if (method_exists($page, 'init_global'))
+					$page->init_global();
+				if (method_exists($page, 'init_module'))
+					$page->init_module();
+				if (method_exists($page, 'init_controller'))
+					$page->init_controller();
+				$page->$action();
+				if (method_exists($page, 'inter_core'))
+					$page->inter_core();
+				if (method_exists($page, 'inter_controller'))
+					$page->inter_controller();
+				if (method_exists($page, 'inter_module'))
+					$page->inter_module();
+				if (method_exists($page, 'inter_global'))
+					$page->inter_global();
+				$page->generateView();
+				if (method_exists($page, 'end_controller'))
+					$page->end_controller();
+				if (method_exists($page, 'end_module'))
+					$page->end_module();
+				if (method_exists($page, 'end_global'))
+					$page->end_global();
+				if (method_exists($page, 'end_core'))
+					$page->end_core();
 				return ;
 			}
 		}
