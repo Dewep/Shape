@@ -34,10 +34,10 @@ function gestionDesErreurs($type, $message, $fichier, $ligne)
 	}
 
 
-	if (in_array($_SERVER["SERVER_NAME"], array('localhost', 'local', 'dewep', 'villers')))
-	{
+	//if (in_array($_SERVER["SERVER_NAME"], array('localhost', 'local', 'dewep', 'villers')))
+	//{
 		echo '<p><b>' . $type_erreur . '</b> : <b style="color:red">' . $message . '</b> (<b>' . $fichier . '</b> <span style="margin:0 5px">ligne</span> <b>' . $ligne . '</b>).</p>';
-	}
+	//}
 
 	//require_once (dirname(__FILE__) . '/Librairies.php');
 	//Libs::alertes()->addAlerte("Erreur PHP", '[b]' . $type_erreur.'[/b] : [b]' . $message . '[/b] ligne ' . $ligne . ' (' . $fichier . ')');

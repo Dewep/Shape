@@ -20,6 +20,9 @@ class Modules_Default_Default extends Modules_Default
 
 	public function indexAction()
 	{
+		$this->view->test = 'toto';
+		$this->view->salut = 'coucou';
+		$this->view->list = array('1', '2' => 5);
 		echo "action\n";
 	}
 }

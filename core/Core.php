@@ -3,8 +3,11 @@
 
 class _Core
 {
+	protected $view;
+
 	public function init_core()
 	{
+		$this->view = new _View();
 		echo "init_core.\n";
 	}
 
@@ -20,6 +23,7 @@ class _Core
 
 	public function generateView()
 	{
+		//$this->view->run();
 		echo "generateView.\n";
 	}
 }

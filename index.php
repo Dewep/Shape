@@ -1,6 +1,5 @@
 <?php
 
-
 require_once(dirname(__FILE__) . '/core/Autoload.php');
 
 _Project::start();
