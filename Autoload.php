@@ -25,10 +25,14 @@ function __autoload($name)
 	}
 	else
 	{
-		if (file_exists(Shape::$root . Shape::getConf('shape', 'library') . '/' . str_replace('_', '/', $name) . '.php'))
+		$libraries = Shape::getConf('shape', 'library');
+		foreach ($libraries as $library)
 		{
-			require_once(Shape::$root . Shape::getConf('shape', 'library') . '/' . str_replace('_', '/', $name) . '.php');
-			return true;
+			if (file_exists(Shape::$root . $library . '/' . str_replace('_', '/', $name) . '.php'))
+			{
+				require_once(Shape::$root . $library . '/' . str_replace('_', '/', $name) . '.php');
+				return true;
+			}
 		}
 	}
 	return false;
