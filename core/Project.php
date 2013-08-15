@@ -26,7 +26,7 @@ class _Project
 
 		$base = '';
 		if (isset($_SERVER['DOCUMENT_ROOT']))
-			$base = substr(dirname(dirname(__FILE__)), strlen($_SERVER['DOCUMENT_ROOT']));
+			$base = substr(dirname(dirname(__FILE__)), strlen($_SERVER['DOCUMENT_ROOT'])) . '/www/';
 
 		foreach ($routages as $route)
 		{
@@ -42,26 +42,30 @@ class _Project
 					$action = str_replace('{' . $key . '}', $value, $action);
 				}
 				$module = ucfirst(basename(preg_replace('#{(.*)}#', '', $module)));
-				$controller = 'Modules_' . $module . '_' . ucfirst(basename(preg_replace('#{(.*)}#', '', $controller)));
-				$action = ucfirst(basename(preg_replace('#{(.*)}#', '', $action))) . 'Action';
+				$controller = ucfirst(basename(preg_replace('#{(.*)}#', '', $controller)));
+				$action = ucfirst(basename(preg_replace('#{(.*)}#', '', $action)));
 
-				if (!file_exists('modules/' . $module))
+				$real_module = $module;
+				$real_controller = 'Modules_' . $module . '_' . $controller;
+				$real_action = $action . 'Action';
+
+				if (!file_exists(dirname(__FILE__) . '/../modules/' . $real_module))
 					throw new Exception("Impossible de trouver ce module.");
-				if (!class_exists($controller))
+				if (!class_exists($real_controller))
 					throw new Exception("Impossible de trouver ce controller.");
-				if (!method_exists($controller, $action))
+				if (!method_exists($real_controller, $real_action))
 					throw new Exception("Impossible de trouver cette action.");
 
-				$page = new $controller();
+				$page = new $real_controller();
 				if (method_exists($page, 'init_core'))
-					$page->init_core();
+					$page->init_core($module, $controller, $action);
 				if (method_exists($page, 'init_global'))
 					$page->init_global();
 				if (method_exists($page, 'init_module'))
 					$page->init_module();
 				if (method_exists($page, 'init_controller'))
 					$page->init_controller();
-				$page->$action();
+				$page->$real_action();
 				if (method_exists($page, 'inter_core'))
 					$page->inter_core();
 				if (method_exists($page, 'inter_controller'))

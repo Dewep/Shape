@@ -5,9 +5,9 @@ class _Core
 {
 	protected $view;
 
-	public function init_core()
+	public function init_core($module, $controller, $action)
 	{
-		$this->view = new _View();
+		$this->view = new _View($module, $controller, $action);
 		echo "init_core.\n";
 	}
 
@@ -23,7 +23,7 @@ class _Core
 
 	public function generateView()
 	{
-		//$this->view->run();
+		$this->view->_run();
 		echo "generateView.\n";
 	}
 }
