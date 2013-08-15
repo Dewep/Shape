@@ -1,13 +1,13 @@
 <?php
 
 
-class _Core
+class Shape_Core
 {
 	protected $view;
 
 	public function init_core($module, $controller, $action)
 	{
-		$this->view = new _View($module, $controller, $action);
+		$this->view = new Shape_View($module, $controller, $action);
 		echo "init_core.\n";
 	}
 

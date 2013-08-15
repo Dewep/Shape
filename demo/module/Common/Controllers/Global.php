@@ -1,7 +1,7 @@
 <?php
 
 
-class Modules_Common_Global extends _Core
+class Module_Common_Global extends Shape_Core
 {
 	public function init_global()
 	{

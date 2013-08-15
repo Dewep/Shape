@@ -1,8 +1,9 @@
 <?php
 
-require_once(dirname(__FILE__) . '/core/Autoload.php');
 
-_Project::start();
+require_once(dirname(__FILE__) . '/Shape/Shape.php');
+
+$courlis = new Shape(dirname(__FILE__));
 
 
 $routages = array();
@@ -44,9 +45,7 @@ $routages[] = array(
 	);
 
 
-_Project::load($routages);
-
-//print_r(_Project::$routages);
+$courlis->load($routages);
 
 
 ?>

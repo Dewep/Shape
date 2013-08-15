@@ -1,11 +1,13 @@
 <?php
 
 
-class _Project
+class Shape
 {
-	static public $routages = array();
+	public $routages = array();
+	static $config = array();
+	static $root = '';
 
-	public static function start()
+	public function __construct($root)
 	{
 		session_start();
 
@@ -18,19 +20,38 @@ class _Project
 
 
 		require_once(dirname(__FILE__) . '/Errors.php');
+
+		self::$root = rtrim($root, '/') . '/';
+		$this->read_conf(dirname(__FILE__) . 'config.ini');
+		$this->read_conf(self::$root . 'config.ini');
+		$this->read_conf(self::$root . 'config.local.ini');
+
+		require_once(dirname(__FILE__) . '/Autoload.php');
+		require_once(dirname(__FILE__) . '/View.php');
+		require_once(dirname(__FILE__) . '/Core.php');
 	}
 
-	public static function load($routages)
+	private function read_conf($file)
 	{
-		self::$routages = $routages;
+		if (file_exists($file))
+			self::$config = array_replace_recursive(self::$config, parse_ini_file($file, true));
+	}
 
-		$base = '';
-		if (isset($_SERVER['DOCUMENT_ROOT']))
-			$base = substr(dirname(dirname(__FILE__)), strlen($_SERVER['DOCUMENT_ROOT'])) . '/www/';
+	public static function getConf($section, $key)
+	{
+		if (!isset(self::$config[$section][$key]))
+			throw new Exception("Impossible de trouver cette variable config : " . $key);
+		return (self::$config[$section][$key]);
+	}
+
+	public function load($routages)
+	{
+		$this->routages = $routages;
+		$base = self::getConf('shape', 'base_url');
 
 		foreach ($routages as $route)
 		{
-			if (preg_match('#^/?' . preg_quote($base) . $route['url'] . '/?$#isU', $_SERVER['REQUEST_URI'], $matches))
+			if (preg_match('#^/?' . preg_quote(rtrim($base, '/')) . '/' . trim($route['url'], '/') . '/?$#isU', $_SERVER['REQUEST_URI'], $matches))
 			{
 				$module = $route['module'];
 				$controller = $route['controller'];
@@ -46,10 +67,11 @@ class _Project
 				$action = ucfirst(basename(preg_replace('#{(.*)}#', '', $action)));
 
 				$real_module = $module;
-				$real_controller = 'Modules_' . $module . '_' . $controller;
+				$real_controller = 'Module_' . $module . '_' . $controller;
 				$real_action = $action . 'Action';
 
-				if (!file_exists(dirname(__FILE__) . '/../modules/' . $real_module))
+				echo $real_controller;
+				if (!file_exists(self::$root . self::getConf('shape', 'module') . '/' . $real_module))
 					throw new Exception("Impossible de trouver ce module.");
 				if (!class_exists($real_controller))
 					throw new Exception("Impossible de trouver ce controller.");

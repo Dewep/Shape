@@ -1,7 +1,7 @@
 <?php
 
 
-class Modules_Default_Default extends Modules_Default
+class Module_Default_Default extends Module_Default
 {
 	public function init_controller()
 	{
@@ -24,6 +24,8 @@ class Modules_Default_Default extends Modules_Default
 		$this->view->salut = 'coucou';
 		$this->view->list = array('1', '2' => 5);
 		echo "action\n";
+		Shape::getConf('bdd', 'password');
+		Dewep_MySQL::connect();
 	}
 }
 

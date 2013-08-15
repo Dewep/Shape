@@ -1,7 +1,7 @@
 <?php
 
 
-class Modules_Default extends Modules_Common_Global
+class Module_Default extends Module_Common_Global
 {
 	public function init_module()
 	{
