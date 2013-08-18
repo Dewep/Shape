@@ -56,11 +56,13 @@ class Shape
 				$module = $route['module'];
 				$controller = $route['controller'];
 				$action = $route['action'];
+				$params = $route['param'];
 				foreach ($matches as $key => $value)
 				{
 					$module = str_replace('{' . $key . '}', $value, $module);
 					$controller = str_replace('{' . $key . '}', $value, $controller);
 					$action = str_replace('{' . $key . '}', $value, $action);
+					$params = str_replace('{' . $key . '}', $value, $params);
 				}
 				$module = ucfirst(basename(preg_replace('#{(.*)}#', '', $module)));
 				$controller = ucfirst(basename(preg_replace('#{(.*)}#', '', $controller)));
@@ -70,7 +72,6 @@ class Shape
 				$real_controller = 'Module_' . $module . '_' . $controller;
 				$real_action = $action . 'Action';
 
-				echo $real_controller;
 				if (!file_exists(self::$root . self::getConf('shape', 'module') . '/' . $real_module))
 					throw new Exception("Impossible de trouver ce module.");
 				if (!class_exists($real_controller))
@@ -79,8 +80,7 @@ class Shape
 					throw new Exception("Impossible de trouver cette action.");
 
 				$page = new $real_controller();
-				if (method_exists($page, 'init_core'))
-					$page->init_core($module, $controller, $action);
+				$page->init_core($module, $controller, $action, $params);
 				if (method_exists($page, 'init_global'))
 					$page->init_global();
 				if (method_exists($page, 'init_module'))
@@ -96,7 +96,7 @@ class Shape
 					$page->inter_module();
 				if (method_exists($page, 'inter_global'))
 					$page->inter_global();
-				$page->generateView();
+				$page->generateView_core();
 				if (method_exists($page, 'end_controller'))
 					$page->end_controller();
 				if (method_exists($page, 'end_module'))
