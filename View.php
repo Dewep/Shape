@@ -21,9 +21,14 @@ class Shape_View
 			require_once($file);
 	}
 
-	public function _run()
+	public function _run($file = 'base')
 	{
-		$this->_require(Shape::$root . Shape::getConf('shape', 'module') . '/' . 'Common/Views/base.phtml', true);
+		$this->render($file, true);
+	}
+
+	public function baseUrl($path = '')
+	{
+		return Shape::baseUrl($path);
 	}
 
 	public function getModule()

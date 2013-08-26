@@ -4,6 +4,7 @@
 class Shape_Core
 {
 	protected $view;
+	private $_fileView;
 	private $_params;
 	private $_config;
 
@@ -15,6 +16,14 @@ class Shape_Core
 		$this->_config->controller = $controller;
 		$this->_config->action = $action;
 		$this->_params = $params;
+		$this->_fileView = 'base';
+		Dewep_MySQL::start();
+		Dewep_CSRF::check();
+	}
+
+	public function end_core()
+	{
+		Dewep_MySQL::commit();
 	}
 
 	public function getModule()
@@ -32,9 +41,19 @@ class Shape_Core
 		return ($this->_config->action);
 	}
 
+	public function baseUrl($path = '')
+	{
+		return Shape::baseUrl($path);
+	}
+
 	public function generateView_core()
 	{
-		$this->view->_run();
+		$this->view->_run($this->_fileView);
+	}
+
+	public function setView($file)
+	{
+		$this->_fileView = $file;
 	}
 
 	public function getParam($key)
