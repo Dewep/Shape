@@ -43,6 +43,16 @@ class Dewep_MySQL
 		return self::$_db;
 	}
 
+	public static function query($req)
+	{
+		return self::$_db->query($req);
+	}
+
+	public static function exec($req)
+	{
+		return self::$_db->exec($req);
+	}
+
 	public static function escape($rq, $guillemets = false)
 	{
 		if ($guillemets)

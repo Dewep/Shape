@@ -11,19 +11,21 @@ class Shape_Core
 	public function init_core($module, $controller, $action, $params)
 	{
 		$this->view = new Shape_View($module, $controller, $action);
+
 		$this->_config = new stdClass();
 		$this->_config->module = $module;
 		$this->_config->controller = $controller;
 		$this->_config->action = $action;
 		$this->_params = $params;
 		$this->_fileView = 'base';
+
 		Dewep_MySQL::start();
-		Dewep_CSRF::check();
 	}
 
 	public function end_core()
 	{
 		Dewep_MySQL::commit();
+		Dewep_Cache::store();
 	}
 
 	public function getModule()
