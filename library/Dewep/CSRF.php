@@ -22,8 +22,12 @@ class Dewep_CSRF
 
 	public static function get()
 	{
+		static $save_token = null;
+
 		if (!Shape::getConf('security', 'csrf_protection'))
 			return false;
+		if ($save_token)
+			return $save_token;
 		$token = sha1(Shape::getConf('security', 'high_salt') . md5('TOKEN' . time() . uniqid()));
 		if (!isset($_SESSION['User']))
 			$_SESSION['User'] = array();
@@ -31,6 +35,7 @@ class Dewep_CSRF
 			$_SESSION['User']['Tokens'] = array();
 		$_SESSION['User']['Tokens'][$token] = time();
 		self::deleteOldsTokens();
+		$save_token = $token;
 		return $token;
 	}
 
