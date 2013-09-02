@@ -53,11 +53,48 @@ class Dewep_MySQL
 		return self::$_db->exec($req);
 	}
 
-	public static function escape($rq, $guillemets = false)
+	public static function getValues($data, $with_key = false)
 	{
-		if ($guillemets)
-			return str_replace('"', '""', $rq);
-		return str_replace("'", "''", $rq);
+		$rq = '';
+		foreach ($data as $row) {
+			$values = '';
+			foreach ($row as $key => $value) {
+				$values .= ($values ? ',' : '');
+				if ($with_key)
+					$values .= '`'.self::escape($key, '`').'` = ';
+				if ($value instanceof MySQL_Expr)
+					$values .= "($value)";
+				else if ($value === NULL)
+					$values .= "NULL";
+				else
+					$values .= "'".self::escape($value)."'";
+			}
+			$rq .= ($rq ? ',' : '') . "($values)";
+		}
+		return $rq;
+	}
+
+	public static function insert($table, $data)
+	{
+		$fields = '';
+		$for_fields = $data;
+		if (is_array($data[0]))
+			$for_fields = $data[0];
+		foreach ($for_fields as $key => $value) {
+			$fields .= ($fields ? ',' : '').'`'.self::escape($key, '`').'`';
+		}
+		$values = self::getValues(is_array($data[0]) ? $data : array($data));
+		return self::$_db->exec("INSERT INTO `".self::escape($table, '`')."` ($fields) VALUES $values;");
+	}
+
+	public static function update($table, $data, $where)
+	{
+		return self::$_db->exec("UPDATE `".self::escape($table, '`')."` SET " . substr(self::getValues(array($data), true), 1, -1) . " WHERE $where;");
+	}
+
+	public static function escape($rq, $escape = "'")
+	{
+		return str_replace(array($escape, '\\'), array($escape.$escape, '\\\\'), $rq);
 	}
 }
 
