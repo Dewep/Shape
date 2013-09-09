@@ -70,14 +70,17 @@ class Shape
 			throw new Exception("Impossible de trouver cette action.");
 
 		$page = new $real_controller();
+		$appel_action = true;
+		$return = false;
 		$page->init_core($module, $controller, $action, $params);
 		if (method_exists($page, 'init_global'))
-			$page->init_global();
+			$appel_action = ($appel_action) ? $page->init_global() : false;
 		if (method_exists($page, 'init_module'))
-			$page->init_module();
+			$appel_action = ($appel_action) ? $page->init_module() : false;
 		if (method_exists($page, 'init_controller'))
-			$page->init_controller();
-		$return = $page->$real_action();
+			$appel_action = ($appel_action) ? $page->init_controller() : false;
+		if ($appel_action)
+			$return = $page->$real_action();
 		if (method_exists($page, 'inter_core'))
 			$page->inter_core();
 		if (method_exists($page, 'inter_controller'))
