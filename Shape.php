@@ -106,9 +106,12 @@ class Shape
 		$this->routages = $routages;
 		$base = self::getConf('shape', 'base_url');
 
+		$request = $_SERVER['REQUEST_URI'];
+		$request = str_replace('//', '/', $request);
+		$request = str_replace('//', '/', $request);
 		foreach ($routages as $route)
 		{
-			if (preg_match('#^/?' . preg_quote(rtrim($base, '/')) . '/' . trim($route['url'], '/') . '/?$#isU', $_SERVER['REQUEST_URI'], $matches))
+			if (preg_match('#^/?' . preg_quote(rtrim($base, '/')) . '/' . trim($route['url'], '/') . '/?(\?(.*))?$#isU', $request, $matches))
 			{
 				$module = $route['module'];
 				$controller = $route['controller'];
