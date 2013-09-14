@@ -96,6 +96,15 @@ class Dewep_MySQL
 	{
 		return str_replace(array($escape, '\\'), array($escape.$escape, '\\\\'), $rq);
 	}
+
+	public static function escapeArray($data, $escape = "'")
+	{
+		$str = '';
+		foreach ($data as $value) {
+			$str .= ($str ? ',' : '') . "'" . self::escape($value) . "'";
+		}
+		return $str;
+	}
 }
 
 ?>
